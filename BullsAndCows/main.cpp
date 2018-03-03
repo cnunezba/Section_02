@@ -1,19 +1,33 @@
+/*
+	This is the console executable, thats makes use of the BullCow class
+	This act as the view in a MVC pattern, and is responsible for all user
+	interaction. For game logic see the FBullCowGame class.
+*/
 #include <iostream>;
 #include <string>;
+#include "FBullCowGame.h";
 
-using namespace std;
+//using namespace std;
+
+using FText = std::string;
+using int32 = int;
 
 void PrintIntro();
 void PlayGame();
-string GetGuess();
+FText GetGuess();
 bool AskToPlayAgain();
 
-//the entry point for our application
-int main() {
+FBullCowGame BCGame; // Instantiate a new game
 
-	PrintIntro();
-	PlayGame();
-	cout << AskToPlayAgain();
+//the entry point for our application
+int32 main() {
+	bool bPlayAgain = false;
+	do {
+		PrintIntro();
+		PlayGame();
+		bPlayAgain = AskToPlayAgain();
+	} while (bPlayAgain);
+	
 
 
 	system("pause");
@@ -22,40 +36,50 @@ int main() {
 
 void PrintIntro() {
 	//introduce the game
-	constexpr int WORD_LENGTH = 5;
-	cout << "Welcome to Bulls and Cows, a fun word game.\n";
-	cout << "Can you guess the " << WORD_LENGTH;
-	cout << " letter isogram I'm thinking of?\n";
-	cout << endl;
+	constexpr int32 WORD_LENGTH = 5;
+	std::cout << "Welcome to Bulls and Cows, a fun word game.\n";
+	std::cout << "Can you guess the " << WORD_LENGTH;
+	std::cout << " letter isogram I'm thinking of?\n";
+	std::cout << std::endl;
 	return;
 }
 
 void PlayGame() {
 
+	BCGame.Reset();
+	int32 MaxTries = BCGame.GetMaxTries();
+	
 	// loop for the number of turns asking for guesses
-	constexpr int NUMBER_OF_TURNS = 5;
-	for (int count = 1; count <= NUMBER_OF_TURNS; count++) {
-		string Guess = GetGuess();
-		cout << "Your guess was: " << Guess << endl;
-		cout << endl;
+	for (int32 count = 1; count <= MaxTries; count++) {
+		FText Guess = GetGuess();
+		//submit a valid guess to the game, and receive counts
+		FBulllCowCount BulllCowCountBCGame = BCGame.SubmitGuess(Guess);
+		// print the number of bulls and cows
+		std::cout << "Bulls: " << BulllCowCountBCGame.Bulls;
+		std::cout << ". Cows: " << BulllCowCountBCGame.Cows << std::endl;
+		
+		std::cout << std::endl;
 	}
 
 }
 
-string GetGuess() {
+FText GetGuess() {
+
+	int32 CurrentTry = BCGame.GetCurrentTry();
+
 	//get a guess from the player	
-	cout << "Enter your guess: ";
-	string Guess = "";
-	getline(cin, Guess);
+	std::cout << "Try " << CurrentTry <<  ". Enter your guess: ";
+	FText Guess = "";
+	std::getline(std::cin, Guess);
 
 	return Guess;
 }
 
 bool AskToPlayAgain() {
 
-	cout << "Do you want to play again?";
-	string Response = "";
-	getline(cin, Response);
+	std::cout << "Do you want to play again? (y/n)";
+	FText Response = "";
+	std::getline(std::cin, Response);
 
 	return (Response[0] == 'y') || (Response[0] == 'Y');
 }
