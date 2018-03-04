@@ -1,5 +1,5 @@
 #pragma once
-#include <string>;
+#include <string>
 
 using FString = std::string;
 using int32 = int;
@@ -10,22 +10,37 @@ struct FBulllCowCount {
 	int32 Cows = 0;
 };
 
+// enumerate
+enum class EGuessStatus {
+	Invalid_Status,
+	OK,
+	Not_Isogram,
+	Wrong_Length,
+	Not_Lowercase
+};
+
 class FBullCowGame {
 public:
 	FBullCowGame(); //constructor
 
 	int32 GetMaxTries() const;
 	int32 GetCurrentTry() const;
+	int32 GetHiddenWordLength() const;
+	
 	bool IsGameWon() const;
+	EGuessStatus CheckGuessValidity(FString) const;
 
 	void Reset(); // TODO: make a more rich return value.
-	bool CheckGuessValidity(FString);
 	// counts bulls and cows, and increasing try # assuming valid guess
-	FBulllCowCount SubmitGuess(FString);
+	FBulllCowCount SubmitValidGuess(FString);
 
 private:
 	// see constructor for initialisation
 	int32 MyCurrentTry;
 	int32 MyMaxTries;
 	FString MyHiddenWord;
+	bool bGameIsWon;
+
+	bool isIsogram(FString) const;
+	bool isLowercase(FString) const;
 };
